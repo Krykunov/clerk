@@ -4,12 +4,15 @@ import dotenv from "dotenv";
 import { db } from "./lib/db";
 import { z } from "zod";
 import bcrypt from "bcrypt";
+// import { clerkMiddleware } from "@clerk/express";
+import { clerkClient } from "@clerk/express";
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+// app.use(clerkMiddleware());
 
 const signupSchema = z.object({
   firstname: z.string().min(2),
@@ -32,8 +35,23 @@ app.post("/api/signup", async (req: Request, res: Response) => {
     const values = [data.firstname, data.lastname, data.email, hashedPassword];
 
     const result = await db.query(query, values);
+    const dbUserId = result.rows[0].id.toString();
 
-    res.status(201).json({ id: result.rows[0].id, message: "User created successfully" });
+    console.log("User created in DB with ID:", dbUserId);
+
+    const clerkUser = await clerkClient.users.createUser({
+      emailAddress: [data.email],
+      firstName: data.firstname,
+      lastName: data.lastname,
+      externalId: dbUserId,
+      password: hashedPassword,
+    });
+
+    if (!clerkUser) {
+      throw new Error("Clerk user creation failed");
+    }
+
+    res.status(201).json({ id: dbUserId, message: "User created successfully" });
   } catch (err) {
     console.error("Error processing signup ❌", err);
     res.status(400).json({ error: "Invalid data or database error" });
