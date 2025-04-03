@@ -9,10 +9,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const formSchema = z.object({
-  username: z.string().min(2, {
+  firstname: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
-  lastName: z.string().min(2, {
+  lastname: z.string().min(2, {
     message: "Last name must be at least 2 characters.",
   }),
   email: z.string().email({
@@ -27,16 +27,40 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
-      lastName: "",
+      firstname: "",
+      lastname: "",
       email: "",
       password: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    try {
+      const res = await fetch("http://localhost:5000/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        let message = "Unknown error";
+        try {
+          const error = await res.json();
+          message = error.error;
+        } catch {
+          message = `Server responded with status ${res.status}`;
+        }
+        console.log("Signup failed: " + message);
+        return;
+      }
+
+      const { message } = await res.json();
+      console.log(message);
+    } catch (err) {
+      console.error("Network error ❌", err);
+    }
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -49,7 +73,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <FormField
                 control={form.control}
-                name="username"
+                name="firstname"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>First name</FormLabel>
@@ -62,7 +86,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
               />
               <FormField
                 control={form.control}
-                name="lastName"
+                name="lastname"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Last name</FormLabel>
