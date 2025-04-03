@@ -51,6 +51,14 @@ app.post("/api/signup", async (req: Request, res: Response) => {
       throw new Error("Clerk user creation failed");
     }
 
+    const expiresInSeconds = 60 * 60 * 24 * 7; // 1 week
+
+    const response = await clerkClient.signInTokens.createSignInToken({
+      userId: clerkUser.id,
+      expiresInSeconds,
+    });
+    console.log("SignInToken:", response);
+
     res.status(201).json({ id: dbUserId, message: "User created successfully" });
   } catch (err) {
     console.error("Error processing signup ❌", err);
