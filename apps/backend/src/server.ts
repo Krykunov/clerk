@@ -1,10 +1,24 @@
-import express from "express";
+import express, { Request, Response } from "express";
+import dotenv from "dotenv";
+import { db } from "./lib/db";
+
+dotenv.config();
 
 const app = express();
+app.use(express.json());
 
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
-});
-app.get("/", (req, res) => {
+app.get("/", (res: Response) => {
   res.send("Hello World");
+});
+
+app.post("/signup", async (res: Response) => {
+  try {
+    await db.query("");
+  } catch (err) {
+    console.error("DB connection failed ❌", err);
+  }
+});
+
+app.listen(process.env.PORT, () => {
+  console.log(`Server is running on port ${process.env.PORT}`);
 });
