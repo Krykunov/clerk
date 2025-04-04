@@ -3,26 +3,53 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useLoginForm } from "@/hooks/useLoginForm";
+import { useSignupForm } from "@/hooks/useSignupForm";
 
-export function LoginForm() {
-  const { form, onSubmit, isLoading } = useLoginForm();
+export function SignupForm() {
+  const { form, onSubmit, isLoading } = useSignupForm();
 
   return (
     <div className={cn("flex flex-col gap-6")}>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome</CardTitle>
+          <CardDescription>Sign up with your email and password</CardDescription>
           <CardDescription>
-            Do not have an account?{" "}
-            <a href="/" className="text-blue-500 hover:underline">
-              Sign up
+            Already have an account?{" "}
+            <a href="/login" className="text-blue-500 hover:underline">
+              Sign in
             </a>
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={onSubmit} className="space-y-8">
+              <FormField
+                control={form.control}
+                name="firstname"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="First name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastname"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Last name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="email"
@@ -50,7 +77,7 @@ export function LoginForm() {
                 )}
               />
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Logging in..." : "Sign in"}
+                {isLoading ? "Signing up..." : "Sign up"}
               </Button>
             </form>
           </Form>

@@ -44,7 +44,7 @@ app.post("/api/signup", async (req: Request, res: Response) => {
       firstName: data.firstname,
       lastName: data.lastname,
       externalId: dbUserId,
-      password: hashedPassword,
+      password: data.password,
     });
 
     if (!clerkUser) {
@@ -59,7 +59,7 @@ app.post("/api/signup", async (req: Request, res: Response) => {
     });
     console.log("SignInToken:", response);
 
-    res.status(201).json({ id: dbUserId, message: "User created successfully" });
+    res.status(201).json({ id: dbUserId, message: "User created successfully", signInToken: response.token });
   } catch (err) {
     console.error("Error processing signup ❌", err);
     res.status(400).json({ error: "Invalid data or database error" });
