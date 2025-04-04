@@ -1,12 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { useState, useEffect } from "react";
 import { useAuth, useSignIn } from "@clerk/clerk-react";
 import { useNavigate } from "react-router";
 
+const formSchema = z.object({
+  email: z.string().email({
+    message: "Invalid email address.",
+  }),
+  password: z.string().min(6, {
+    message: "Password must be at least 6 characters.",
+  }),
+  code: z.string(),
+});
+
+type ForgotPasswordFormValues = z.infer<typeof formSchema>;
+
 export function useForgotPassword() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [code, setCode] = useState("");
   const [successfulCreation, setSuccessfulCreation] = useState(false);
   const [secondFactor, setSecondFactor] = useState(false);
   const [error, setError] = useState("");
@@ -16,6 +28,15 @@ export function useForgotPassword() {
   const { isSignedIn } = useAuth();
   const { isLoaded, signIn, setActive } = useSignIn();
 
+  const form = useForm<ForgotPasswordFormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      code: "",
+    },
+  });
+
   useEffect(() => {
     if (isSignedIn) {
       navigate("/");
@@ -23,14 +44,16 @@ export function useForgotPassword() {
   }, [isSignedIn, navigate]);
 
   const handleRequestCode = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!isLoaded || !signIn) {
       console.warn("🔁 Clerk not ready for login.");
       return;
     }
-    e.preventDefault();
+
     setIsLoading(true);
     try {
-      await signIn?.create({
+      const email = form.getValues("email");
+      await signIn.create({
         strategy: "reset_password_email_code",
         identifier: email,
       });
@@ -46,20 +69,20 @@ export function useForgotPassword() {
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
     if (!isLoaded || !signIn) {
       console.warn("🔁 Clerk not ready for login.");
       return;
     }
+
+    setIsLoading(true);
     try {
-      const result = await signIn?.attemptFirstFactor({
+      const { code, password } = form.getValues();
+
+      const result = await signIn.attemptFirstFactor({
         strategy: "reset_password_email_code",
         code,
         password,
       });
-
-      if (!result) return;
 
       if (result.status === "needs_second_factor") {
         setSecondFactor(true);
@@ -77,12 +100,7 @@ export function useForgotPassword() {
   };
 
   return {
-    email,
-    setEmail,
-    password,
-    setPassword,
-    code,
-    setCode,
+    form,
     successfulCreation,
     secondFactor,
     error,
