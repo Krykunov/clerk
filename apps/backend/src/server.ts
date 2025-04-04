@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import { db } from "./lib/db";
 import { z } from "zod";
 import bcrypt from "bcrypt";
-// import { clerkMiddleware } from "@clerk/express";
 import { clerkClient } from "@clerk/express";
 
 dotenv.config();
@@ -12,7 +11,6 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-// app.use(clerkMiddleware());
 
 const signupSchema = z.object({
   firstname: z.string().min(2),
