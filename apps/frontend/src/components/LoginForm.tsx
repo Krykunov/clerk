@@ -6,7 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useLoginForm } from "@/hooks/useLoginForm";
 
 export function LoginForm() {
-  const { form, onSubmit, isLoading } = useLoginForm();
+  const { form, onSubmit, onPasswordReset, isLoading } = useLoginForm();
 
   return (
     <div className={cn("flex flex-col gap-6")}>
@@ -49,9 +49,16 @@ export function LoginForm() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Logging in..." : "Sign in"}
-              </Button>
+
+              <div className="flex gap-4">
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? "Logging in..." : "Sign in"}
+                </Button>
+
+                <Button type="button" onClick={onPasswordReset} variant="destructive">
+                  Forgot password 🥹
+                </Button>
+              </div>
             </form>
           </Form>
         </CardContent>

@@ -65,10 +65,14 @@ export function useLoginForm() {
       }
     }
   };
+  const onPasswordReset = () => {
+    navigate("/forgot-password");
+  };
 
   return {
     form,
     onSubmit: form.handleSubmit(onLogin),
+    onPasswordReset,
     isLoading: form.formState.isSubmitting,
   };
 }
