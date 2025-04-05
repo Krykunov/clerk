@@ -6,6 +6,8 @@ A full-stack application demonstrating integration of Clerk authentication with 
 
 Check out the live demo: [https://clerk-omega-lake.vercel.app/](https://clerk-omega-lake.vercel.app/)
 
+(Vercel on frontend and render.com on backend)
+
 ## Setup Instructions
 
 ### Prerequisites
@@ -59,6 +61,7 @@ CLERK_SECRET_KEY=
 
    ```
    VITE_CLERK_PUBLISHABLE_KEY
+   VITE_API_URL
    ```
 
 8. Start the development servers (from the root folder), it starts frontend and backend:
