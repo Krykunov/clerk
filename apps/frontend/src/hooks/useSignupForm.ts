@@ -5,6 +5,8 @@ import { useSignIn, useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router";
 import { useEffect } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const formSchema = z.object({
   firstname: z.string().min(2, {
     message: "Username must be at least 2 characters.",
@@ -46,7 +48,7 @@ export function useSignupForm() {
 
   const onSignup = async (data: SignupFormValues) => {
     try {
-      const res = await fetch("http://localhost:5000/api/signup", {
+      const res = await fetch(`${API_URL}/api/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -78,7 +80,6 @@ export function useSignupForm() {
           ticket: signInToken,
         });
         await setActive({ session: result.createdSessionId });
-        // navigate("/account");
         console.log("✅ User signed in successfully");
       } catch (err) {
         console.error("❌ Failed to sign in with token", err);
