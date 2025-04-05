@@ -2,6 +2,10 @@
 
 A full-stack application demonstrating integration of Clerk authentication with a custom database backend.
 
+## Live Demo
+
+Check out the live demo: [https://clerk-omega-lake.vercel.app/](https://clerk-omega-lake.vercel.app/)
+
 ## Setup Instructions
 
 ### Prerequisites
@@ -64,7 +68,7 @@ CLERK_SECRET_KEY=
 
 ## Usage
 
-1. Open your browser and go to `http://localhost:3000`
+1. Open your browser and go to `http://localhost:5173`
 2. Register a new account with the signup form
 3. Log in with your credentials
 4. Try the password reset functionality
